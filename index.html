@@ -36,17 +36,9 @@
         //if( getGamesPlayable().indexOf( playerSelection ) === -1 )
         //console.log("User input is wrong"); return;
 
-        if( (playerSelection === "rock") && (computerSelection === "scissors")){ 
-
-            result[0] = `You Win! ${ upperCaseFirst( playerSelection ) } beats ${ upperCaseFirst( computerSelection ) }`;
-            result[1] = 'win';
-
-        } else if( (playerSelection === "paper") && (computerSelection === "rock")){ 
-
-            result[0] = `You Win! ${ upperCaseFirst( playerSelection ) } beats ${ upperCaseFirst( computerSelection ) }`;
-            result[1] = 'win';
-
-        } else if( (playerSelection === "scissors") && (computerSelection === "paper")){ 
+        if( (playerSelection === "rock") && (computerSelection === "scissors")
+            || ((playerSelection === "scissors") && (computerSelection === "paper"))
+            || ((playerSelection === "paper") && (computerSelection === "rock"))){ 
 
             result[0] = `You Win! ${ upperCaseFirst( playerSelection ) } beats ${ upperCaseFirst( computerSelection ) }`;
             result[1] = 'win';
