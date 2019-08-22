@@ -1,140 +1,231 @@
-<script>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Rock, Paper and Scissors</title>
+        <meta name="author" content="Kadiri Kazeem"/>
+    </head>
+    <body>
 
-(function(){
+        <style>
+        div#container{
+            border:3px solid #404040;
+            width: 500px;
+            height:auto;
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+        }
 
-    const gameScores = { "playerScore": 0, "computerScore": 0 };
-        
-    const gameRoundsCount =  { rounds: 0 };
+        div.sub-container:not(#game-options){
+            display: flex;
+            margin-top: 2vh;
+            align-items: center;
+            border-top: 3px solid #404040;
+            padding: 1em;
+        }
 
-    function upperCaseFirst(strValue) {
+        div.sub-container > div {
+            padding: 0.5em;
+            flex-basis: 50%;
+        }
 
-        let arrayString = strValue.split("");
+        div#game-options{
+            flex-direction: column;
+            flex: 1;
+        }
 
-        return arrayString[0].toUpperCase() + arrayString.slice(1, arrayString.length).join(""); 
+        div#game-options-buttons{
+            display: flex;
+            justify-content: space-around;
+            width: 96%;
+        }
 
-    }
+        div#game-options-buttons > button {
+            width: 24%;
+            padding: 0.5em 0em;
+        }
 
-    function getGamesPlayable() {
+        div.title-div{
+            background: #404040;
+            color: white;
+        }
+        </style>
+       
+        <div id="container">
 
-        return ['rock', 'scissors', 'paper'];
-        
-    }
+            <!-- Displays buttons representing all the possible options -->
+            <div id="game-options" class="sub-container">
+                <h3 id="title-info"> Please click on one of the buttons to play</h3>
+                <div id="game-options-buttons">
+                    <button type="button" id="rock-button">Rock</button>
+                    <button type="button" id="paper-button">Paper</button>
+                    <button type="button" id="scissors-button">Scissors</button>
+                </div>
+            </div>
 
-    function computerPlay() {
+            <!-- Displays player's selection -->
+            <div id="player-game-info" class="sub-container">
+                <div id="player-title" class="title-div"><h4>Player</h4></div>
+                <div id="player-selection"></div>
+            </div>
 
-        const randomNumber = Math.floor((Math.random() * 10) / 4);
+            <!-- Displays computer's selection -->
+            <div id="computer-game-info" class="sub-container">
+                <div id="computer-title" class="title-div"><h4>Computer</h4></div>
+                <div id="computer-selection"></div>
+            </div>
 
-        return getGamesPlayable()[ randomNumber ];
-    }
+            <!-- Displays computer's selection -->
+            <div id="game-result" class="sub-container">
+                <div id="result-title" class="title-div"><h4>Result</h4></div>
+                <div id="result-display"></div>
+            </div>
 
-    function playRound(playerSelection, computerSelection) {
+            <!-- Displays Winner -->
+            <div id="winner-display" class="sub-container">
+                <h2></h2>
+            </div>
+        </div>
+    
+    <script defer>
 
-        playerSelection = playerSelection.toLowerCase();
+    (function(){
 
-        let result = Array(2);
+        const gameScores = { "playerScore": 0, "computerScore": 0 };
+            
+        const gameRoundsCount =  { rounds: 0 };
 
-        //if( getGamesPlayable().indexOf( playerSelection ) === -1 )
-        //console.log("User input is wrong"); return;
+        function upperCaseFirst(strValue) {
 
-        if( (playerSelection === "rock") && (computerSelection === "scissors")
-            || ((playerSelection === "scissors") && (computerSelection === "paper"))
-            || ((playerSelection === "paper") && (computerSelection === "rock"))){ 
+            let arrayString = strValue.split("");
 
-            result[0] = `You Win! ${ upperCaseFirst( playerSelection ) } beats ${ upperCaseFirst( computerSelection ) }`;
-            result[1] = 'win';
-
-        } else if( playerSelection === computerSelection){ 
-
-            result[0] = `You Draw!`;
-            result[1] = 'draw';
-
-        } else {
-
-            result[0] = `You Lose! ${ upperCaseFirst( computerSelection ) } beats ${ upperCaseFirst( playerSelection ) }`;
-            result[1] = 'lose';
+            return arrayString[0].toUpperCase() + arrayString.slice(1, arrayString.length).join(""); 
 
         }
 
-        return result;
+        function getGamesPlayable() {
 
-    }
-
-    function addScore( gamePlayer ) {
-
-        switch( gamePlayer ){
-            case "player":
-                gameScores.playerScore += 1;
-                break;
+            return ['rock', 'scissors', 'paper'];
             
-            case "computer":
-                gameScores.computerScore += 1;
-                break;
         }
 
-    }
+        function computerPlay() {
 
-    function incrementGameRoundsCount() {
+            const randomNumber = Math.floor((Math.random() * 10) / 4);
 
-        gameRoundsCount.rounds += 1;
-
-    }
-
-    function displayResult( result, showAlert = false) {
-
-        console.log( result );
-                
-        if( showAlert )
-        alert( result );
-
-    }
-
-    function game() {
-
-        let playerSelection = prompt("Play one of the following: Rock, Paper or Scissors");
-
-        let computerSelection = computerPlay();
-
-        const result = playRound(playerSelection, computerSelection);
-
-        displayResult( result[0], true );
-
-        if( result[1] === "win" ){ 
-            
-            addScore("player"); 
-            
-        } else if( result[1] === "lose" ){ 
-        
-            addScore("computer"); 
-
+            return getGamesPlayable()[ randomNumber ];
         }
 
-        incrementGameRoundsCount();
+        function playRound(playerSelection, computerSelection) {
 
-        if( gameRoundsCount.rounds === 5 ) {
+            playerSelection = playerSelection.toLowerCase();
 
-            const { computerScore, playerScore } = gameScores;
+            let result = Array(2);
 
-            let finalResult;
-                
-            if( computerScore > playerScore ){
-                
-                finalResult = `Computer wins! ${computerScore} : ${playerScore} `;
+            //if( getGamesPlayable().indexOf( playerSelection ) === -1 )
+            //console.log("User input is wrong"); return;
+
+            if( (playerSelection === "rock") && (computerSelection === "scissors")
+                || ((playerSelection === "scissors") && (computerSelection === "paper"))
+                || ((playerSelection === "paper") && (computerSelection === "rock"))){ 
+
+                result[0] = `You Win! ${ upperCaseFirst( playerSelection ) } beats ${ upperCaseFirst( computerSelection ) }`;
+                result[1] = 'win';
+
+            } else if( playerSelection === computerSelection){ 
+
+                result[0] = `You Draw!`;
+                result[1] = 'draw';
 
             } else {
 
-                finalResult = `You win! ${playerScore} : ${computerScore} `;
+                result[0] = `You Lose! ${ upperCaseFirst( computerSelection ) } beats ${ upperCaseFirst( playerSelection ) }`;
+                result[1] = 'lose';
 
             }
 
-            displayResult( finalResult, true );
+            return result;
 
-            return;
+        }
+
+        function addScore( gamePlayer ) {
+
+            switch( gamePlayer ){
+                case "player":
+                    gameScores.playerScore += 1;
+                    break;
+                
+                case "computer":
+                    gameScores.computerScore += 1;
+                    break;
+            }
+
+        }
+
+        function incrementGameRoundsCount() {
+
+            gameRoundsCount.rounds += 1;
+
+        }
+
+        function displayResult( result, showAlert = false) {
+
+            console.log( result );
+                    
+            if( showAlert )
+            alert( result );
+
+        }
+
+        function game() {
+
+            let playerSelection = prompt("Play one of the following: Rock, Paper or Scissors");
+
+            let computerSelection = computerPlay();
+
+            const result = playRound(playerSelection, computerSelection);
+
+            displayResult( result[0], true );
+
+            if( result[1] === "win" ){ 
+                
+                addScore("player"); 
+                
+            } else if( result[1] === "lose" ){ 
+            
+                addScore("computer"); 
+
+            }
+
+            incrementGameRoundsCount();
+
+            if( gameRoundsCount.rounds === 5 ) {
+
+                const { computerScore, playerScore } = gameScores;
+
+                let finalResult;
+                    
+                if( computerScore > playerScore ){
+                    
+                    finalResult = `Computer wins! ${computerScore} : ${playerScore} `;
+
+                } else {
+
+                    finalResult = `You win! ${playerScore} : ${computerScore} `;
+
+                }
+
+                displayResult( finalResult, true );
+
+                return;
+            }
+
+            game();
         }
 
         game();
-    }
 
-    game();
-
-})();
-</script>
+    })();
+    </script>
+</body>
+</html>
