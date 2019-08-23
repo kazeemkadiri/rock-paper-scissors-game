@@ -16,6 +16,15 @@
             text-align: center;
         }
 
+        div.sub-container .border-gray {
+            border: 2px solid darkgray;
+            padding: 0.4em;
+            height: 3.86em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
         div.sub-container:not(#game-options){
             display: flex;
             margin-top: 2vh;
@@ -43,11 +52,32 @@
         div#game-options-buttons > button {
             width: 24%;
             padding: 0.5em 0em;
+            cursor: pointer;
         }
 
         div.title-div{
             background: #404040;
             color: white;
+        }
+
+        div#winner-display{
+            display: flex;
+            justify-content: space-between
+        }
+
+        button#reset-button{
+            background:crimson;
+            color:white;
+            border:1px solid white;
+            border-radius: 65px;
+            padding: 0.8em 1em;
+            cursor: pointer;
+        }
+
+        button#reset-button.active{
+            background: white;
+            color: crimson;
+            border:1px solid crimson;
         }
         </style>
        
@@ -66,24 +96,25 @@
             <!-- Displays player's selection -->
             <div id="player-game-info" class="sub-container">
                 <div id="player-title" class="title-div"><h4>Player</h4></div>
-                <div id="player-selection"></div>
+                <div id="player-selection" class="border-gray"><h4></h4></div>
             </div>
 
             <!-- Displays computer's selection -->
             <div id="computer-game-info" class="sub-container">
                 <div id="computer-title" class="title-div"><h4>Computer</h4></div>
-                <div id="computer-selection"></div>
+                <div id="computer-selection" class="border-gray"><h4></h4></div>
             </div>
 
             <!-- Displays computer's selection -->
             <div id="game-result" class="sub-container">
                 <div id="result-title" class="title-div"><h4>Result</h4></div>
-                <div id="result-display"><h4></h4></div>
+                <div id="result-display" class="border-gray"><h4></h4></div>
             </div>
 
             <!-- Displays Winner -->
             <div id="winner-display" class="sub-container">
                 <h3></h3>
+                <button id="reset-button">Reset</button>
             </div>
         </div>
     
@@ -91,15 +122,13 @@
 
     (function(){
 
-        const gameScores = { "playerScore": 0, "computerScore": 0 };
+        const gameScores = { playerScore: 0, computerScore: 0 };
             
-        const gameRoundsCount =  { rounds: 0 };
-
         let gamePlayersSelection = {};
 
         function initializeEventListenersForGameButtons() {
 
-          document.querySelectorAll(".game-button").forEach( gameButton => {
+          document.querySelectorAll('.game-button').forEach( gameButton => {
 
             gameButton.addEventListener('click', e => {
               
@@ -108,13 +137,46 @@
               let computerSelection = computerPlay();
 
               setGlobalValueForPlayersSelection(playerSelection, computerSelection);
-              
+
               playGame();
               
             });
 
           });
 
+          // Reset button listener to reset the game when clicked
+          selectDOMElement('#reset-button').addEventListener( 'click', e => {
+
+            let count = 0;
+
+            e.target.classList.toggle('active'); 
+
+            // This interval changes the buttons state from active to inactive
+            setTimeout( () => {   
+
+                e.target.classList.toggle('active'); 
+
+              }, 50);
+
+            // This resets the game scores  
+            gameScores.playerScore = 0;
+            gameScores.computerScore= 0;
+
+            gamePlayersSelection = {};
+
+            // This resets the UI displaying scores and results
+            ['#player-selection', '#computer-selection', '#result-display h4', '#winner-display h3']
+              .forEach( DOMelementSelector => {
+
+                selectDOMElement(DOMelementSelector).textContent = '';
+
+              });
+
+            // This activates the game buttons for a new game round
+            disableGameButtons( false );
+
+          });
+        
         }
 
         function setGlobalValueForPlayersSelection(playerSelection, computerSelection) {
@@ -178,7 +240,7 @@
 
           const { computerScore, playerScore } = gameScores;
 
-          selectDOMElement('#result-display').firstChild.textContent = `${playerScore} : ${computerScore}`;
+          selectDOMElement('#result-display').firstElementChild.textContent = `${playerScore} : ${computerScore}`;
 
         }
 
@@ -190,7 +252,25 @@
 
             displayWinner();
 
+            disableGameButtons( true );
+
           }
+        }
+
+        function disableGameButtons( shouldDisable = true ) {
+
+            document.querySelectorAll('button.game-button')
+              .forEach( gameButton => {
+
+                if( shouldDisable ){
+                    gameButton.setAttribute('disabled', 'disabled');
+                } else {
+                    gameButton.removeAttribute('disabled');
+                }
+                
+
+              });
+
         }
 
         function displayWinner() {
@@ -209,7 +289,7 @@
 
           }
 
-          selectDOMElement('#winner-display').firstChild.textContent = finalResult;
+          selectDOMElement('#winner-display').firstElementChild.textContent = finalResult;
 
         }
 
