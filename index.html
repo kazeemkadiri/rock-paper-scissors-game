@@ -57,9 +57,9 @@
             <div id="game-options" class="sub-container">
                 <h3 id="title-info"> Please click on one of the buttons to play</h3>
                 <div id="game-options-buttons">
-                    <button type="button" id="rock-button">Rock</button>
-                    <button type="button" id="paper-button">Paper</button>
-                    <button type="button" id="scissors-button">Scissors</button>
+                    <button type="button" id="rock-button" class="game-button">Rock</button>
+                    <button type="button" id="paper-button" class="game-button">Paper</button>
+                    <button type="button" id="scissors-button" class="game-button">Scissors</button>
                 </div>
             </div>
 
@@ -78,12 +78,12 @@
             <!-- Displays computer's selection -->
             <div id="game-result" class="sub-container">
                 <div id="result-title" class="title-div"><h4>Result</h4></div>
-                <div id="result-display"></div>
+                <div id="result-display"><h4></h4></div>
             </div>
 
             <!-- Displays Winner -->
             <div id="winner-display" class="sub-container">
-                <h2></h2>
+                <h3></h3>
             </div>
         </div>
     
@@ -94,6 +94,124 @@
         const gameScores = { "playerScore": 0, "computerScore": 0 };
             
         const gameRoundsCount =  { rounds: 0 };
+
+        let gamePlayersSelection = {};
+
+        function initializeEventListenersForGameButtons() {
+
+          document.querySelectorAll(".game-button").forEach( gameButton => {
+
+            gameButton.addEventListener('click', e => {
+              
+              let playerSelection = e.target.id.split("-")[0];
+
+              let computerSelection = computerPlay();
+
+              setGlobalValueForPlayersSelection(playerSelection, computerSelection);
+              
+              playGame();
+              
+            });
+
+          });
+
+        }
+
+        function setGlobalValueForPlayersSelection(playerSelection, computerSelection) {
+
+          gamePlayersSelection = { playerSelection, computerSelection };
+
+        }
+
+        function playGame() {
+
+          displayPlayerAndComputerSelectionOnUI();
+
+          const { playerSelection, computerSelection } = gamePlayersSelection;
+
+          if(playerSelection === computerSelection) {
+            
+            setGlobalValueForPlayersSelection(playerSelection, computerPlay());
+
+            playGame(); 
+
+            return;  
+          }
+
+          const result = playRound(playerSelection, computerSelection);
+
+          calculateScore( result );
+
+          updateResultUI();
+
+          checkWinner();
+        }
+
+        function displayPlayerAndComputerSelectionOnUI() {
+
+          const { playerSelection, computerSelection } = gamePlayersSelection;
+
+          selectDOMElement('#player-selection').textContent = `${upperCaseFirst(playerSelection)}`;
+
+          selectDOMElement('#computer-selection').textContent = `${upperCaseFirst(computerSelection)}`;
+        }
+
+        function selectDOMElement(selector) {
+            return document.querySelector(selector);
+        }
+
+        function calculateScore( result ) {
+
+            if( result[1] === "win" ){ 
+                
+                incrementScore("player"); 
+                
+            } else if( result[1] === "lose" ){ 
+            
+                incrementScore("computer"); 
+
+            }
+
+        }
+
+        function updateResultUI() {
+
+          const { computerScore, playerScore } = gameScores;
+
+          selectDOMElement('#result-display').firstChild.textContent = `${playerScore} : ${computerScore}`;
+
+        }
+
+        function checkWinner() {
+
+          const { computerScore, playerScore } = gameScores;
+
+          if((computerScore === 5) || (playerScore === 5)) {
+
+            displayWinner();
+
+          }
+        }
+
+        function displayWinner() {
+
+          const {computerScore, playerScore} = gameScores;
+
+          let finalResult;
+                
+          if( computerScore > playerScore ){
+                
+            finalResult = `Computer wins! ${computerScore} : ${playerScore} `;
+
+          } else {
+
+            finalResult = `You win! ${playerScore} : ${computerScore} `;
+
+          }
+
+          selectDOMElement('#winner-display').firstChild.textContent = finalResult;
+
+        }
 
         function upperCaseFirst(strValue) {
 
@@ -148,7 +266,7 @@
 
         }
 
-        function addScore( gamePlayer ) {
+        function incrementScore( gamePlayer ) {
 
             switch( gamePlayer ){
                 case "player":
@@ -162,12 +280,6 @@
 
         }
 
-        function incrementGameRoundsCount() {
-
-            gameRoundsCount.rounds += 1;
-
-        }
-
         function displayResult( result, showAlert = false) {
 
             console.log( result );
@@ -177,53 +289,7 @@
 
         }
 
-        function game() {
-
-            let playerSelection = prompt("Play one of the following: Rock, Paper or Scissors");
-
-            let computerSelection = computerPlay();
-
-            const result = playRound(playerSelection, computerSelection);
-
-            displayResult( result[0], true );
-
-            if( result[1] === "win" ){ 
-                
-                addScore("player"); 
-                
-            } else if( result[1] === "lose" ){ 
-            
-                addScore("computer"); 
-
-            }
-
-            incrementGameRoundsCount();
-
-            if( gameRoundsCount.rounds === 5 ) {
-
-                const { computerScore, playerScore } = gameScores;
-
-                let finalResult;
-                    
-                if( computerScore > playerScore ){
-                    
-                    finalResult = `Computer wins! ${computerScore} : ${playerScore} `;
-
-                } else {
-
-                    finalResult = `You win! ${playerScore} : ${computerScore} `;
-
-                }
-
-                displayResult( finalResult, true );
-
-                return;
-            }
-
-            game();
-        }
-
-        game();
+        initializeEventListenersForGameButtons();
 
     })();
     </script>
